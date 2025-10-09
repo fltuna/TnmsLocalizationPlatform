@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# 
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TnmsLocalizationPlatform", "TnmsLocalizationPlatform\TnmsLocalizationPlatform.csproj", "{F88C3BE8-ECF4-40FE-913C-725A6C13542B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TnmsLocalizationPlatform.Shared", "TnmsLocalizationPlatform.Shared\TnmsLocalizationPlatform.Shared.csproj", "{DFBEB013-FE97-43F4-981E-0D36C912A122}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F88C3BE8-ECF4-40FE-913C-725A6C13542B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F88C3BE8-ECF4-40FE-913C-725A6C13542B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F88C3BE8-ECF4-40FE-913C-725A6C13542B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F88C3BE8-ECF4-40FE-913C-725A6C13542B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFBEB013-FE97-43F4-981E-0D36C912A122}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFBEB013-FE97-43F4-981E-0D36C912A122}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFBEB013-FE97-43F4-981E-0D36C912A122}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFBEB013-FE97-43F4-981E-0D36C912A122}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
