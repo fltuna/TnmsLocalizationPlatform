@@ -212,8 +212,7 @@ public class TnmsLocalizationPlatform : IModSharpModule, ITnmsLocalizationPlatfo
         return ClientCultures.TryGetValue(client.Slot, out var culture) ? culture : ServerDefaultCulture;
     }
 
-
-    public void OnClientConnected(IGameClient client)
+    public void OnClientPutInServer(IGameClient client)
     {
         // Default to server culture for fallback until we load the actual culture
         ClientCultures[client.Slot] = ServerDefaultCulture;
