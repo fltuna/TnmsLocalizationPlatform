@@ -1,0 +1,125 @@
+name: .NET CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    if: startsWith(github.ref, 'refs/tags/') == false && contains(github.event.head_commit.message, '[no ci]') == false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Install dependencies
+        run: nuget restore
+
+      - name: Build
+        run: Start-Process "build.bat" "windows" -Wait -NoNewWindow
+
+  publish:
+    runs-on: windows-latest
+    if: startsWith(github.ref, 'refs/tags/')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: Start-Process "build.bat" "windows --override-custom-files" -Wait -NoNewWindow
+
+      - name: Remove unnecessary files
+        run: |
+          Remove-Item .\.build\modules\ -Recurse
+
+      - name: Compress artifacts
+        run:
+          Compress-Archive -Path .build/* -Destination TnmsLocalizationPlatform.zip
+
+      - name: Upload release assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts
+          path: TnmsLocalizationPlatform.zip
+
+  release:
+    runs-on: windows-latest
+    needs: publish
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-artifacts
+          path: artifacts/
+
+      - name: check files
+        run : |
+          tree
+
+      - name: Create Release and Upload Asset
+        run: |
+          gh release create "${{ github.ref_name }}" --title "Release ${{ github.ref_name }}" --generate-notes --draft=false artifacts/TnmsLocalizationPlatform.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+  
+  publish-nuget:
+    runs-on: windows-latest
+    needs: release
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup .NET
+        
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Install dependencies
+        run: dotnet restore
+        working-directory: TnmsLocalizationPlatform.Shared
+
+      - name: Build
+        run: dotnet build -c Release -p:DebugType=None -p:DebugSymbols=false
+        working-directory: TnmsLocalizationPlatform.Shared
+
+      - name: Pack
+        run: dotnet pack --configuration Release
+        working-directory: TnmsLocalizationPlatform.Shared
+
+      - name: Extract version
+        id: package_version
+        run: |
+          $xml = [Xml] (Get-Content TnmsLocalizationPlatform.Shared/TnmsLocalizationPlatform.Shared.csproj)
+          $version = $xml.Project.PropertyGroup.PackageVersion
+          echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
+        shell: pwsh
+
+      - name: Publish to Nuget
+        run: |
+          dotnet nuget push "bin/Release/TnmsLocalizationPlatform.Shared.${{env.VERSION}}.nupkg" --skip-duplicate --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
+        working-directory: TnmsLocalizationPlatform.Shared
