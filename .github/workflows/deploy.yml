@@ -48,10 +48,6 @@ jobs:
       - name: Build
         run: Start-Process "build.bat" "windows --override-custom-files" -Wait -NoNewWindow
 
-      - name: Remove unnecessary files
-        run: |
-          Remove-Item .\.build\modules\ -Recurse
-
       - name: Compress artifacts
         run:
           Compress-Archive -Path .build/* -Destination TnmsLocalizationPlatform.zip
