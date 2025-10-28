@@ -111,7 +111,7 @@ jobs:
         id: package_version
         run: |
           $xml = [Xml] (Get-Content config.props)
-          $version = $xml.Project.PropertyGroup.PackageVersion
+          $version = $xml.Project.PropertyGroup.Version
           echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
         shell: pwsh
 
