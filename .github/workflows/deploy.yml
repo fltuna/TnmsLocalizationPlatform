@@ -110,7 +110,7 @@ jobs:
       - name: Extract version
         id: package_version
         run: |
-          $xml = [Xml] (Get-Content TnmsLocalizationPlatform.Shared/TnmsLocalizationPlatform.Shared.csproj)
+          $xml = [Xml] (Get-Content config.props)
           $version = $xml.Project.PropertyGroup.PackageVersion
           echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
         shell: pwsh
